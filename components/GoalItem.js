@@ -10,7 +10,7 @@ const GoalItem = (props) => {
 				style={({ pressed }) => pressed && styles.pressedItem}
 			>
 				<Text style={styles.listStyleText}>
-					{itemData.item.id} - {itemData.item.text}
+					{itemData.index + 1} - {itemData.item.text}
 				</Text>
 			</Pressable>
 		</View>
