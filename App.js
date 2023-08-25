@@ -1,20 +1,97 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, View, TextInput, FlatList } from "react-native";
+import { useState } from "react";
+
+import GoalItem from "./components/GoalItem";
+import GoalInput from "./components/InputGoal";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+	const [listGoals, setlistGoals] = useState([]);
+	const [openModal, setOpenModal] = useState(false);
+
+	const addGoalHandler = (enteredText) => {
+		setlistGoals((currentList) => [
+			...currentList,
+			{ text: enteredText, id: Math.random().toString() }
+		]);
+		setOpenModal(false);
+	};
+
+	const removeGoalHandler = () => {
+		setlistGoals([]);
+	};
+
+	const deleteGoalHandler = (id) => {
+		setlistGoals((currentGoals) => {
+			return currentGoals.filter((data) => data.id !== id);
+		});
+	};
+
+	const startAddGoalHandler = () => {
+		setOpenModal(true);
+	};
+
+	const closeModalGoalHandler = () => {
+		setOpenModal(false);
+	};
+
+	return (
+		<View style={styles.appContainer}>
+			<Button
+				title="add New Goal"
+				color={"#5e0acc"}
+				onPress={startAddGoalHandler}
+			/>
+
+			<GoalInput
+				closeModal={closeModalGoalHandler}
+				openModal={openModal}
+				addGoal={addGoalHandler}
+				listGoals={listGoals}
+			/>
+
+			<View style={styles.goalsContainer}>
+				<FlatList
+					data={listGoals}
+					renderItem={(itemData) => {
+						return (
+							<GoalItem
+								itemData={itemData}
+								onDeleteItem={deleteGoalHandler}
+							/>
+						);
+					}}
+					keyExtractor={(item, index) => {
+						return item.id;
+					}}
+					alwaysBounceVertical={false}
+				/>
+			</View>
+			{listGoals.length > 0 && (
+				<View style={styles.inputRowDel}>
+					<Button
+						title="Clear "
+						onPress={removeGoalHandler}
+						disabled={listGoals.length > 0 ? false : true}
+					/>
+				</View>
+			)}
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+	appContainer: {
+		flex: 1,
+		paddingTop: 50,
+		paddingHorizontal: 10
+	},
+	inputRowDel: {
+		flexDirection: "column",
+		justifyContent: "flex-end",
+		alignItems: "center",
+		marginBottom: 10
+	},
+	goalsContainer: {
+		flex: 4
+	}
 });
